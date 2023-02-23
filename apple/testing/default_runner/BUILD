@@ -96,6 +96,12 @@ ios_xctestrun_runner(
     visibility = ["//visibility:public"],
 )
 
+ios_xctestrun_runner(
+    name = "ios_xctestrun_ui_testing_runner",
+    ui_testing_enabled = True,
+    visibility = ["//visibility:public"],
+)
+
 macos_test_runner(
     name = "macos_default_runner",
     # Used by the rule implementations, so it needs to be public; but

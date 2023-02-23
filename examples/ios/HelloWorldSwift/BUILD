@@ -26,9 +26,17 @@ swift_library(
     ],
 )
 
+swift_library(
+    name = "UITests",
+    testonly = True,
+    srcs = [
+        "Tests/UITests.swift",
+    ],
+)
+
 ios_unit_test(
     name = "UnitTests",
-    minimum_os_version = "8.0",
+    minimum_os_version = "15.0",
     deps = [":Tests"],
 )
 
@@ -67,4 +75,12 @@ ios_application(
 build_test(
     name = "ExamplesBuildTest",
     targets = [":HelloWorldSwift"],
+)
+
+ios_unit_test(
+    name = "HelloWorldSwiftUITests",
+    minimum_os_version = "15.0",
+    runner = "@build_bazel_rules_apple//apple/testing/default_runner:ios_xctestrun_ui_testing_runner",
+    test_host = ":HelloWorldSwift",
+    deps = [":UITests"],
 )

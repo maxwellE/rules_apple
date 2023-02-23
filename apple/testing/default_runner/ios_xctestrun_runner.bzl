@@ -10,6 +10,7 @@ def _get_template_substitutions(
         device_type,
         os_version,
         simulator_creator,
+        ui_testing_enabled,
         random,
         xctestrun_template):
     substitutions = {
@@ -17,6 +18,7 @@ def _get_template_substitutions(
         "os_version": os_version,
         "simulator_creator.py": simulator_creator,
         # "ordered" isn't a special string, but anything besides "random" for this field runs in order
+        "ui_testing_enabled": "true" if ui_testing_enabled else "",
         "test_order": "random" if random else "ordered",
         "xctestrun_template": xctestrun_template,
     }
@@ -49,6 +51,7 @@ def _ios_xctestrun_runner_impl(ctx):
             device_type = device_type,
             os_version = os_version,
             simulator_creator = ctx.executable._simulator_creator.short_path,
+            ui_testing_enabled = ctx.attr.ui_testing_enabled,
             random = ctx.attr.random,
             xctestrun_template = ctx.file._xctestrun_template.short_path,
         ),
@@ -83,6 +86,13 @@ By default, it reads from --ios_simulator_device or falls back to some device.
             doc = """
 Whether to run the tests in random order to identify unintended state
 dependencies.
+""",
+        ),
+        "ui_testing_enabled": attr.bool(
+            default = False,
+            doc = """
+Controls if this test runner is able to run XCUITests or not, only set
+this value if needed.
 """,
         ),
         "os_version": attr.string(
