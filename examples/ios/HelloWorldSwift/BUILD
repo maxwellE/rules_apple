@@ -36,7 +36,7 @@ swift_library(
 
 ios_unit_test(
     name = "UnitTests",
-    minimum_os_version = "15.0",
+    minimum_os_version = "8.0",
     deps = [":Tests"],
 )
 
@@ -51,7 +51,7 @@ genrule(
 
 ios_unit_test(
     name = "UnitTestsWithCoverageManifest",
-    minimum_os_version = "15.0",
+    minimum_os_version = "8.0",
     test_coverage_manifest = "CoverageManifest.instrumented_files",
     deps = [":Tests"],
 )
@@ -79,7 +79,7 @@ build_test(
 
 ios_unit_test(
     name = "HelloWorldSwiftUITests",
-    minimum_os_version = "15.0",
+    minimum_os_version = "8.0",
     runner = "@build_bazel_rules_apple//apple/testing/default_runner:ios_xctestrun_ui_testing_runner",
     test_host = ":HelloWorldSwift",
     deps = [":UITests"],
