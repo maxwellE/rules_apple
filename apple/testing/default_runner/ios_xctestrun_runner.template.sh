@@ -18,6 +18,11 @@ if [[ -n "${CREATE_XCRESULT_BUNDLE:-}" ]]; then
   create_xcresult_bundle=true
 fi
 
+create_xctestrun_bundle="false"
+if [[ "$create_xcresult_bundle" == true ]]; then
+  create_xctestrun_bundle="%(create_xctestrun_bundle)s"
+fi
+
 custom_xcodebuild_args=(%(xcodebuild_args)s)
 simulator_name=""
 while [[ $# -gt 0 ]]; do
@@ -316,9 +321,13 @@ else
   simulator_creator_args+=(--no-reuse-simulator)
 fi
 
-simulator_id="$("./%(simulator_creator.py)s" \
-  "${simulator_creator_args[@]}"
-)"
+if [[ "$create_xctestrun_bundle" == true ]]; then
+  simulator_id="unused"
+else
+  simulator_id="$("./%(simulator_creator.py)s" \
+    "${simulator_creator_args[@]}"
+  )"
+fi
 
 test_exit_code=0
 readonly testlog=$test_tmp_dir/test.log
@@ -389,6 +398,15 @@ if [[ "$should_use_xcodebuild" == true ]]; then
   rm -rf "$result_bundle_path"
   if [[ "$create_xcresult_bundle" == true ]]; then
     args+=(-resultBundlePath "$result_bundle_path")
+  fi
+
+  if [[ "$create_xctestrun_bundle" == true ]]; then
+    echo "note: creating xctestrun bundle"
+    ls -la "$test_tmp_dir"
+    cp "$test_tmp_dir/tests.xctestrun" "$TEST_UNDECLARED_OUTPUTS_DIR"
+    cp -R "$test_tmp_dir_test_host_path" "$TEST_UNDECLARED_OUTPUTS_DIR"
+    cp -R "$test_tmp_dir/$runner_app" "$TEST_UNDECLARED_OUTPUTS_DIR"
+    exit 0
   fi
 
   if (( ${#custom_xcodebuild_args[@]} )); then
